@@ -93,7 +93,3 @@ O PetGuard foi desenvolvido para ser facilmente personalizável:
 - **Componentes**: Modifique os arquivos em `src/app/components`
 - **Páginas**: Personalize as rotas em `src/app`
 - **Estilos**: Ajuste os estilos globais em `src/app/globals.css`
-
-
-
-
