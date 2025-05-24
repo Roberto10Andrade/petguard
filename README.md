@@ -1,75 +1,99 @@
 # 🐾 PetGuard
 
-Sistema premium para monitoramento e cuidado animal, focado em experiência do usuário, segurança e design moderno.
+<div align="center">
 
-## ✨ Descrição
-O **PetGuard** é uma aplicação web desenvolvida em Next.js e React, com autenticação via Firebase, voltada para donos de pets que desejam monitorar, cadastrar e gerenciar informações dos seus animais de forma prática, segura e elegante.
+![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white)
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)
 
-## 🚀 Principais Recursos
-- Cadastro e login com e-mail/senha ou Google
-- Interface minimalista e responsiva (mobile/desktop)
-- Design premium com glassmorphism e tipografia clara
-- Navbar inteligente: ícone de perfil só aparece quando logado
-- Acesso seguro e rápido ao dashboard e funcionalidades
-- Totalmente integrado ao Firebase Auth
+</div>
 
-## 🛠️ Tecnologias Utilizadas
-- [Next.js](https://nextjs.org/) 15+
-- [React](https://react.dev/)
-- [TypeScript](https://www.typescriptlang.org/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Firebase Auth](https://firebase.google.com/products/auth)
-- [React Icons](https://react-icons.github.io/react-icons/)
+## 📋 Sobre o Projeto
 
-## ⚡ Instalação e Uso
-1. **Clone o repositório:**
+O **PetGuard** é uma plataforma premium de monitoramento e cuidado animal, desenvolvida com foco em experiência do usuário, segurança e design moderno. Nossa missão é proporcionar uma solução completa para donos de pets que desejam gerenciar a saúde e bem-estar de seus animais de forma inteligente e intuitiva.
+
+### ✨ Destaques
+
+- 🔐 **Segurança Avançada**: Autenticação robusta via Firebase
+- 🎨 **Design Premium**: Interface moderna com glassmorphism e tipografia clara
+- 📱 **Totalmente Responsivo**: Experiência perfeita em qualquer dispositivo
+- ⚡ **Performance Otimizada**: Construído com Next.js para máxima velocidade
+- 🔄 **Atualizações em Tempo Real**: Monitoramento contínuo do seu pet
+
+## 🚀 Tecnologias
+
+- **Frontend:**
+  - [Next.js 15+](https://nextjs.org/)
+  - [React](https://react.dev/)
+  - [TypeScript](https://www.typescriptlang.org/)
+  - [Tailwind CSS](https://tailwindcss.com/)
+  - [React Icons](https://react-icons.github.io/react-icons/)
+
+- **Backend & Autenticação:**
+  - [Firebase Auth](https://firebase.google.com/products/auth)
+  - [Firebase Firestore](https://firebase.google.com/products/firestore)
+
+## 🛠️ Instalação
+
+1. **Clone o repositório**
    ```bash
-   git clone https://github.com/seu-usuario/petguard.git
+   git clone https://github.com/Roberto10Andrade/petguard.git
    cd petguard
    ```
-2. **Instale as dependências:**
+
+2. **Instale as dependências**
    ```bash
    npm install
    # ou
-yarn install
+   yarn install
    ```
-3. **Configure o Firebase:**
-   - Renomeie `.env.example` para `.env.local` (se existir) e adicione suas chaves do Firebase.
-   - Ou edite `src/app/firebaseConfig.ts` com suas credenciais.
-4. **Inicie o servidor de desenvolvimento:**
+
+3. **Configure as variáveis de ambiente**
+   ```bash
+   # Crie um arquivo .env.local na raiz do projeto
+   cp .env.example .env.local
+   ```
+   Adicione suas credenciais do Firebase no arquivo `.env.local`
+
+4. **Inicie o servidor de desenvolvimento**
    ```bash
    npm run dev
    # ou
-yarn dev
+   yarn dev
    ```
-5. Acesse [http://localhost:3000](http://localhost:3000) no navegador.
 
-## 🔒 Autenticação
-- O sistema utiliza [Firebase Auth](https://firebase.google.com/products/auth) para login seguro.
-- Cadastro e login por e-mail/senha ou Google.
-- Navbar exibe ícone de perfil e menu apenas quando o usuário está logado.
+5. Acesse `http://localhost:3000` no seu navegador
+
+## 📱 Funcionalidades
+
+### 🔐 Autenticação
+- Login com e-mail/senha
+- Login com Google
+- Recuperação de senha
+- Proteção de rotas
+
+### 👤 Perfil do Usuário
+- Gerenciamento de dados pessoais
+- Histórico de atividades
+- Preferências de notificação
+
+### 🐕 Gestão de Pets
+- Cadastro de múltiplos pets
+- Histórico médico
+- Agendamento de consultas
+- Registro de vacinas
 
 ## 🎨 Personalização
-- Altere cores, fontes e imagens em `src/app/components` e `tailwind.config.js`.
-- Para mudar textos, edite os arquivos em `src/app/cadastro/page.tsx` e `src/app/login/page.tsx`.
 
-## 🤝 Contribuição
-Pull requests são bem-vindos! Sinta-se à vontade para propor melhorias ou abrir issues.
+O PetGuard foi desenvolvido para ser facilmente personalizável:
 
-## 📧 Suporte
-Dúvidas ou sugestões? Abra uma issue ou envie um e-mail para [seu-email@dominio.com].
-
----
-Feito com ❤️ para os pets!
+- **Cores**: Edite o arquivo `tailwind.config.ts`
+- **Componentes**: Modifique os arquivos em `src/app/components`
+- **Páginas**: Personalize as rotas em `src/app`
+- **Estilos**: Ajuste os estilos globais em `src/app/globals.css`
 
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
