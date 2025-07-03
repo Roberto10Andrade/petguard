@@ -10,8 +10,12 @@
   },
   "dependencies": {
     "firebase": "^11.8.1",
+    "framer-motion": "^12.23.0",
+    "keen-slider": "^6.8.6",
+    "lottie-react": "^2.4.1",
     "next": "15.1.8",
     "react": "^19.0.0",
+    "react-circular-progressbar": "^2.2.0",
     "react-dom": "^19.0.0",
     "react-hot-toast": "^2.5.2",
     "react-icons": "^4.12.0",
