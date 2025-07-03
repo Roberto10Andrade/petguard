@@ -1,9 +1,5 @@
 "use client";
 import { useState } from 'react';
-import { db, storage, auth } from '../firebaseConfig';
-import { collection, addDoc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 
 export default function NovoPetPage() {
@@ -14,16 +10,6 @@ export default function NovoPetPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
-
-  // Verifica usuário logado
-  useState(() => {
-    const unsub = onAuthStateChanged(auth, (u) => {
-      setUser(u);
-      if (!u) router.push('/login');
-    });
-    return () => unsub();
-  });
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -32,18 +18,14 @@ export default function NovoPetPage() {
     try {
       let fotoUrl = '';
       if (foto) {
-        const storageRef = ref(storage, `pets/${user.uid}_${Date.now()}_${foto.name}`);
-        await uploadBytes(storageRef, foto);
-        fotoUrl = await getDownloadURL(storageRef);
+        fotoUrl = URL.createObjectURL(foto);
       }
-      await addDoc(collection(db, 'pets'), {
-        nome,
-        tipo,
-        raca,
-        fotoUrl,
-        userId: user.uid,
-        criadoEm: new Date()
-      });
+      const id = Date.now().toString();
+      const novoPet = { id, nome, tipo, raca, fotoUrl };
+      const stored = localStorage.getItem('pets');
+      const pets = stored ? JSON.parse(stored) : [];
+      pets.push(novoPet);
+      localStorage.setItem('pets', JSON.stringify(pets));
       router.push('/meus-pets');
     } catch (err: any) {
       setError('Erro ao cadastrar pet.');

@@ -1,196 +1,107 @@
+"use client";
 import Image from 'next/image'
 import { FaPaw, FaBone, FaHeartbeat, FaMapMarkerAlt, FaUtensils, FaChartLine, FaDog, FaCat, FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
+import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css';
+import { motion } from 'framer-motion';
+import Lottie from 'lottie-react';
+import petLottie from '../../../public/lottie/pet-demo.json';
+import PetCarousel from '../components/PetCarousel';
 
 export default function Dashboard() {
+  // Exemplo de dados mockados
+  const atividade = 82;
+  const alimentacao = 67;
+  const conquistas = [
+    { icon: <FaCheckCircle className="text-green-500 animate-bounce" />, texto: '7 dias sem alertas!' },
+    { icon: <FaPaw className="text-blue-400 animate-bounce" />, texto: 'Meta de atividade batida!' },
+  ];
+  const timeline = [
+    { hora: '08:00', evento: 'Café da manhã', cor: 'bg-green-100', icon: <FaUtensils className="text-green-500" /> },
+    { hora: '10:00', evento: 'Passeio', cor: 'bg-blue-100', icon: <FaPaw className="text-blue-400" /> },
+    { hora: '12:00', evento: 'Alerta: água baixa', cor: 'bg-yellow-100', icon: <FaExclamationTriangle className="text-yellow-500 animate-pulse" /> },
+    { hora: '14:00', evento: 'Almoço', cor: 'bg-green-100', icon: <FaUtensils className="text-green-500" /> },
+    { hora: '16:00', evento: 'Brincadeira', cor: 'bg-purple-100', icon: <FaBone className="text-purple-400" /> },
+  ];
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-green-100 to-violet-100 font-inter">
-      <div className="container mx-auto px-4 py-10">
-        <div className="flex flex-col md:flex-row items-center justify-between mb-10 gap-6">
-          <h1 className="text-4xl font-black text-blue-900 flex items-center gap-3 drop-shadow-lg">
-            <FaPaw className="text-green-400 animate-bounce" /> Dashboard PetGuard
-          </h1>
-          <div className="flex items-center space-x-4">
-            <div className="relative w-16 h-16 rounded-full overflow-hidden border-4 border-green-300 shadow-lg animate-pulse">
-              <Image
-                src="https://images.unsplash.com/photo-1552053831-71594a27632d?q=80&w=2062"
-                alt="Avatar do Pet"
-                fill
-                className="object-cover"
-              />
-            </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-green-100 to-violet-100 font-inter relative overflow-x-hidden">
+      <div className="container mx-auto px-4 py-10 relative z-10">
+        {/* Saudação animada */}
+        <motion.div initial={{ opacity: 0, y: -30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className="flex flex-col md:flex-row items-center justify-between mb-10 gap-6 mt-16">
+          <div className="flex items-center gap-4">
+            <Image src="/images/freepik__a-golden-retriever-outdoors-in-a-sunny-park-wearin__68617.jpeg" alt="Golden Retriever" width={120} height={120} className="w-24 h-24 md:w-32 md:h-32 rounded-2xl shadow-lg object-cover" priority />
             <div>
+              <h1 className="text-4xl font-black text-blue-900">Bem-vindo de volta, Roberto!</h1>
+              <p className="text-lg text-blue-700">Seu pet está saudável e feliz 🐾</p>
+            </div>
+          </div>
+          <motion.div whileHover={{ scale: 1.08 }} className="flex items-center space-x-4">
+            <div className="relative w-16 h-16 rounded-full overflow-hidden border-4 border-green-300 shadow-lg animate-pulse">
+              <Image src="/images/freepik__a-golden-retriever-outdoors-in-a-sunny-park-wearin__68617.jpeg" alt="Avatar do Pet" fill className="object-cover" />
+                </div>
+                <div>
               <p className="font-bold text-blue-900 text-lg flex items-center gap-1"><FaDog className="text-yellow-400" /> Rex</p>
               <p className="text-sm text-blue-700 flex items-center gap-1"><FaBone className="text-green-400" /> Golden Retriever</p>
             </div>
-          </div>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {/* Card de Status do Pet */}
-          <div className="bg-white/80 backdrop-blur-xl p-7 rounded-3xl shadow-2xl border-2 border-green-200">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-extrabold text-blue-700 flex items-center gap-2"><FaHeartbeat className="text-pink-400 animate-pulse" /> Status do Pet</h2>
-              <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-bold animate-pulse">Online</span>
-            </div>
-            <div className="space-y-4">
-              <div className="flex items-center space-x-3">
-                <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center">
-                  <FaMapMarkerAlt className="w-5 h-5 text-blue-600" />
-                </div>
-                <div>
-                  <p className="text-sm text-blue-700">Última localização</p>
-                  <p className="text-blue-900 font-bold">Casa</p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-3">
-                <div className="w-9 h-9 rounded-full bg-purple-100 flex items-center justify-center">
-                  <FaChartLine className="w-5 h-5 text-purple-600" />
-                </div>
-                <div>
-                  <p className="text-sm text-blue-700">Nível de atividade</p>
-                  <p className="text-blue-900 font-bold">Normal</p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-3">
-                <div className="w-9 h-9 rounded-full bg-yellow-100 flex items-center justify-center">
-                  <FaUtensils className="w-5 h-5 text-yellow-600" />
-                </div>
-                <div>
-                  <p className="text-sm text-blue-700">Última alimentação</p>
-                  <p className="text-blue-900 font-bold">2h atrás</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Card de Localização */}
-          <div className="bg-white/80 backdrop-blur-xl p-7 rounded-3xl shadow-2xl border-2 border-blue-200">
-            <h2 className="text-xl font-extrabold text-blue-700 mb-4 flex items-center gap-2"><FaMapMarkerAlt className="text-green-400" /> Localização em Tempo Real</h2>
-            <div className="h-64 bg-blue-50 rounded-xl overflow-hidden relative">
-              <Image
-                src="https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=2074"
-                alt="Mapa de localização"
-                fill
-                className="object-cover"
-              />
-              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                <div className="w-10 h-10 bg-green-400 rounded-full border-4 border-white animate-pulse shadow-lg" />
-              </div>
-            </div>
-          </div>
-
-          {/* Card de Atividade */}
-          <div className="bg-white/80 backdrop-blur-xl p-7 rounded-3xl shadow-2xl border-2 border-blue-200">
-            <h2 className="text-xl font-extrabold text-blue-700 mb-4 flex items-center gap-2"><FaChartLine className="text-purple-400" /> Atividade Física</h2>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="w-11 h-11 rounded-full bg-blue-100 flex items-center justify-center">
-                    <FaPaw className="w-6 h-6 text-blue-600 animate-bounce" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-blue-700">Tempo em movimento</p>
-                    <p className="text-blue-900 font-bold">45 min</p>
-                  </div>
-                </div>
-              </div>
-              <div className="h-2 bg-blue-100 rounded-full overflow-hidden">
-                <div className="h-full bg-blue-500 rounded-full animate-pulse" style={{ width: '75%' }} />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-blue-50 p-3 rounded-lg">
-                  <p className="text-sm text-blue-700">Distância</p>
-                  <p className="text-blue-900 font-bold">2.5 km</p>
-                </div>
-                <div className="bg-blue-50 p-3 rounded-lg">
-                  <p className="text-sm text-blue-700">Energia</p>
-                  <p className="text-blue-900 font-bold">Alto</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Card de Alimentação */}
-          <div className="bg-white/80 backdrop-blur-xl p-7 rounded-3xl shadow-2xl border-2 border-green-200">
-            <h2 className="text-xl font-extrabold text-blue-700 mb-4 flex items-center gap-2"><FaUtensils className="text-yellow-400" /> Controle de Alimentação</h2>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="w-11 h-11 rounded-full bg-green-100 flex items-center justify-center">
-                    <FaUtensils className="w-6 h-6 text-green-600" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-blue-700">Próxima refeição</p>
-                    <p className="text-blue-900 font-bold">14:00</p>
-                  </div>
-                </div>
-              </div>
-              <div className="bg-green-50 p-4 rounded-lg">
-                <div className="flex justify-between mb-2">
-                  <span className="text-sm text-blue-700">Nível do reservatório</span>
-                  <span className="text-sm font-bold text-blue-900">75%</span>
-                </div>
-                <div className="h-2 bg-green-200 rounded-full overflow-hidden">
-                  <div className="h-full bg-green-500 rounded-full animate-pulse" style={{ width: '75%' }} />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-green-50 p-3 rounded-lg">
-                  <p className="text-sm text-blue-700">Quantidade</p>
-                  <p className="text-blue-900 font-bold">200g</p>
-                </div>
-                <div className="bg-green-50 p-3 rounded-lg">
-                  <p className="text-sm text-blue-700">Refeições</p>
-                  <p className="text-blue-900 font-bold">3/dia</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
+          </motion.div>
+        </motion.div>
+        {/* Adicionar blocos logo após a saudação */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10">
+          {/* Card de Atividade com gráfico circular */}
+          <motion.div whileHover={{ scale: 1.05, rotate: 1 }} className="bg-white/90 rounded-3xl shadow-2xl p-8 flex flex-col items-center">
+            <CircularProgressbar value={atividade} text={`${atividade}%`} styles={buildStyles({
+              pathColor: '#3b82f6',
+              textColor: '#1e3a8a',
+              trailColor: '#dbeafe',
+              backgroundColor: '#fff',
+            })} className="w-28 h-28" />
+            <p className="mt-4 text-blue-900 font-bold">Meta de atividade</p>
+          </motion.div>
+          {/* Card de Alimentação com gráfico circular */}
+          <motion.div whileHover={{ scale: 1.05, rotate: -1 }} className="bg-white/90 rounded-3xl shadow-2xl p-8 flex flex-col items-center">
+            <CircularProgressbar value={alimentacao} text={`${alimentacao}%`} styles={buildStyles({
+              pathColor: '#22c55e',
+              textColor: '#166534',
+              trailColor: '#bbf7d0',
+              backgroundColor: '#fff',
+            })} className="w-28 h-28" />
+            <p className="mt-4 text-green-700 font-bold">Meta de alimentação</p>
+          </motion.div>
+          {/* Card de Conquistas */}
+          <motion.div whileHover={{ scale: 1.05 }} className="bg-gradient-to-br from-yellow-100 via-pink-100 to-blue-100 rounded-3xl shadow-2xl p-8 flex flex-col items-center">
+            <h2 className="text-xl font-extrabold text-blue-700 mb-4 flex items-center gap-2"><FaCheckCircle className="text-green-400 animate-bounce" /> Conquistas</h2>
+            <ul className="space-y-3">
+              {conquistas.map((c, i) => (
+                <li key={i} className="flex items-center gap-2 text-blue-900 font-bold">{c.icon} {c.texto}</li>
+              ))}
+            </ul>
+          </motion.div>
           {/* Card de Alertas */}
-          <div className="bg-white/80 backdrop-blur-xl p-7 rounded-3xl shadow-2xl border-2 border-yellow-200">
-            <h2 className="text-xl font-extrabold text-blue-700 mb-4 flex items-center gap-2"><FaExclamationTriangle className="text-yellow-400 animate-bounce" /> Alertas</h2>
-            <div className="space-y-4">
-              <div className="flex items-center space-x-3 p-3 bg-green-50 rounded-lg">
-                <div className="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center">
-                  <FaCheckCircle className="w-5 h-5 text-green-600" />
+          <motion.div whileHover={{ scale: 1.05 }} className="bg-gradient-to-br from-yellow-50 via-red-50 to-pink-50 border-l-8 border-yellow-400 rounded-3xl shadow-2xl p-8 animate-pulse flex flex-col items-center">
+            <h2 className="text-xl font-extrabold text-yellow-700 mb-4 flex items-center gap-2"><FaExclamationTriangle className="text-yellow-400 animate-bounce" /> Alertas</h2>
+            <p className="text-yellow-700 font-bold">Reservatório de ração em 75%</p>
+            <p className="text-red-600 font-bold">Alerta: água baixa!</p>
+          </motion.div>
                 </div>
-                <p className="text-green-700 font-bold">Sistema funcionando normalmente</p>
-              </div>
-              <div className="flex items-center space-x-3 p-3 bg-yellow-50 rounded-lg">
-                <div className="w-9 h-9 rounded-full bg-yellow-100 flex items-center justify-center">
-                  <FaExclamationTriangle className="w-5 h-5 text-yellow-600 animate-pulse" />
-                </div>
-                <p className="text-yellow-700 font-bold">Reservatório de ração em 75%</p>
-              </div>
+        {/* Linha do tempo do pet */}
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.2 }} className="mt-12 bg-white/90 rounded-3xl shadow-2xl p-8">
+          <h2 className="text-2xl font-black text-blue-900 mb-6 flex items-center gap-2"><FaChartLine className="text-green-400" /> Linha do Tempo do Pet</h2>
+          <div className="flex flex-col md:flex-row gap-8">
+            <ul className="flex-1 space-y-4">
+              {timeline.map((item, i) => (
+                <li key={i} className={`flex items-center gap-4 p-4 rounded-xl shadow-sm ${item.cor}`}>
+                  <span className="font-bold text-blue-900 w-16">{item.hora}</span>
+                  <span className="w-8 h-8 flex items-center justify-center rounded-full bg-white border border-blue-100">{item.icon}</span>
+                  <span className="text-blue-800 font-semibold">{item.evento}</span>
+                </li>
+              ))}
+            </ul>
+            <div className="flex-1 flex flex-col items-center justify-center">
+              <Image src="/images/pets21.png" alt="Pets" width={320} height={180} className="w-64 h-auto rounded-2xl shadow-lg object-contain" priority />
+              <p className="mt-4 text-blue-700 text-center">Acompanhe o dia do seu pet em tempo real!</p>
             </div>
           </div>
-
-          {/* Card de Estatísticas */}
-          <div className="bg-white/80 backdrop-blur-xl p-7 rounded-3xl shadow-2xl border-2 border-blue-200">
-            <h2 className="text-xl font-extrabold text-blue-700 mb-4 flex items-center gap-2"><FaChartLine className="text-green-400" /> Estatísticas Diárias</h2>
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-blue-50 p-4 rounded-lg">
-                  <p className="text-sm text-blue-700">Tempo de atividade</p>
-                  <p className="text-2xl font-black text-blue-900">2h 30min</p>
-                </div>
-                <div className="bg-blue-50 p-4 rounded-lg">
-                  <p className="text-sm text-blue-700">Calorias gastas</p>
-                  <p className="text-2xl font-black text-blue-900">450</p>
-                </div>
-              </div>
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <div className="flex justify-between mb-2">
-                  <span className="text-sm text-blue-700">Refeições realizadas</span>
-                  <span className="text-sm font-bold text-blue-900">2/3</span>
-                </div>
-                <div className="h-2 bg-blue-200 rounded-full overflow-hidden">
-                  <div className="h-full bg-blue-500 rounded-full animate-pulse" style={{ width: '66%' }} />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   )

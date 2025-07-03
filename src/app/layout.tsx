@@ -4,6 +4,7 @@ import "./globals.css";
 import Image from "next/image";
 import { ConditionalNavbar } from "./components/ConditionalNavbar";
 import { Toaster } from "react-hot-toast";
+import Footer from './components/Footer';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,6 +24,7 @@ export default function RootLayout({
         <ConditionalNavbar />
         <Toaster position="top-right" />
         {children}
+        <Footer />
       </body>
     </html>
   );

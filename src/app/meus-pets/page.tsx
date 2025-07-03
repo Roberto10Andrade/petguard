@@ -6,44 +6,22 @@ import { db, auth } from '../firebaseConfig';
 import { collection, query, where, getDocs, doc, deleteDoc } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 import { deleteObject, ref as storageRef } from 'firebase/storage';
+import Image from 'next/image';
 
 export default function MeusPetsPage() {
   const [pets, setPets] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      setUser(user);
-      if (user) {
-        setLoading(true);
-        const q = query(collection(db, 'pets'), where('userId', '==', user.uid));
-        const querySnapshot = await getDocs(q);
-        const petsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        setPets(petsData);
-        setLoading(false);
-      } else {
-        setPets([]);
-        setLoading(false);
-      }
-    });
-    return () => unsubscribe();
+    const stored = localStorage.getItem('pets');
+    if (stored) setPets(JSON.parse(stored));
   }, []);
 
   const handleRemover = async (pet: any) => {
     if (!window.confirm('Tem certeza que deseja remover este pet?')) return;
-    if (pet.fotoUrl) {
-      try {
-        const fotoRef = storageRef(storage, pet.fotoUrl);
-        await deleteObject(fotoRef);
-      } catch {}
-    }
-    await deleteDoc(doc(db, 'pets', pet.id));
-    setPets(pets.filter(p => p.id !== pet.id));
+    const novosPets = pets.filter(p => p.id !== pet.id);
+    setPets(novosPets);
+    localStorage.setItem('pets', JSON.stringify(novosPets));
   };
-
-  if (loading) return <div className="min-h-screen flex items-center justify-center text-blue-900 text-xl font-bold">Carregando...</div>;
-  if (!user) return <div className="min-h-screen flex items-center justify-center text-blue-900 text-xl font-bold">Faça login para ver seus pets.</div>;
 
   return (
     <div className="min-h-screen bg-[#f8fafc] px-4 py-24 flex flex-col items-center">
@@ -56,7 +34,12 @@ export default function MeusPetsPage() {
         </Link>
         {pets.length === 0 ? (
           <div className="bg-white/90 border border-blue-100 rounded-2xl shadow p-8 flex flex-col items-center w-full max-w-xl">
-            <FaDog className="text-5xl text-blue-200 mb-4" />
+            <svg width="120" height="120" viewBox="0 0 120 120" fill="none" className="mb-4 animate-bounce-slow">
+              <circle cx="60" cy="60" r="56" fill="#e0f2fe" />
+              <path d="M60 90c-12-8-28-18-28-34a18 18 0 0136 0 18 18 0 0136 0c0 16-16 26-28 34z" fill="#38bdf8"/>
+              <ellipse cx="60" cy="60" rx="10" ry="14" fill="#fff"/>
+              <path d="M60 70a6 6 0 100-12 6 6 0 000 12z" fill="#38bdf8"/>
+            </svg>
             <span className="text-lg text-blue-800 font-semibold mb-2">Você ainda não cadastrou nenhum pet.</span>
             <span className="text-blue-500 mb-6">Clique em "Adicionar Pet" para começar!</span>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-2 w-full">
