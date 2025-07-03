@@ -2,18 +2,40 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import { signOut } from "firebase/auth";
+import { auth } from "../firebaseConfig";
 
 interface NavbarProps {
   isNavOpen: boolean;
   setIsNavOpen: (isOpen: boolean) => void;
 }
 
-import { FaHome, FaPaw, FaCog, FaTachometerAlt, FaBell, FaUserCircle } from 'react-icons/fa';
+import { FaHome, FaPaw, FaCog, FaTachometerAlt, FaBell, FaUserCircle, FaSignOutAlt } from 'react-icons/fa';
 import { useAuthUser } from '../useAuthUser';
+import { usePathname } from "next/navigation";
 
 export const Navbar = ({ isNavOpen, setIsNavOpen }: NavbarProps) => {
   const [scrolled, setScrolled] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const { user, loading } = useAuthUser();
+  const pathname = usePathname();
+
+  // Debug: Log do estado de autenticação
+  console.log('🔍 Navbar Debug:', JSON.stringify({ 
+    user: user ? { 
+      uid: user.uid, 
+      email: user.email, 
+      displayName: user.displayName,
+      photoURL: user.photoURL 
+    } : null, 
+    loading, 
+    isAuthenticated: !!user 
+  }, null, 2));
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -23,11 +45,32 @@ export const Navbar = ({ isNavOpen, setIsNavOpen }: NavbarProps) => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      setShowUserMenu(false);
+      
+      // Mostrar notificação de logout
+      if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification('🐾 PetGuard - Logout Realizado!', {
+          body: 'Você saiu da sua conta. Volte sempre para cuidar dos seus pets!',
+          icon: '/images/patas-bg.svg',
+          badge: '/images/patas-bg.svg',
+          tag: 'logout-notification',
+          requireInteraction: false,
+          silent: false
+        });
+      }
+    } catch (error) {
+      console.error("Erro ao fazer logout:", error);
+    }
+  };
+
   return (
     <nav className={`fixed w-full z-50 transition-all duration-500 ${
       scrolled
-        ? "bg-white/80 backdrop-blur-2xl shadow-2xl border-b border-indigo-100"
-        : "bg-gradient-to-r from-indigo-700 via-violet-700 to-indigo-600/90 backdrop-blur-2xl shadow-xl"
+        ? "bg-white/80 backdrop-blur-2xl shadow-2xl border-b border-green-100"
+        : "bg-gradient-to-r from-blue-900 via-blue-800 to-green-600 backdrop-blur-2xl shadow-xl"
     }`}>
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white/10 via-transparent to-transparent pointer-events-none"></div>
       <div className="container mx-auto px-4">
@@ -56,10 +99,10 @@ export const Navbar = ({ isNavOpen, setIsNavOpen }: NavbarProps) => {
             {[
               { name: 'Início', href: '/', icon: <FaHome /> },
               { name: 'Dashboard', href: '/dashboard', icon: <FaTachometerAlt /> },
-              { name: 'Meus Pets', href: '/pets', icon: <FaPaw /> },
+              { name: 'Meus Pets', href: '/meus-pets', icon: <FaPaw /> },
               { name: 'Configurações', href: '/configuracoes', icon: <FaCog /> }
             ].map((link) => {
-              const isActive = typeof window !== "undefined" && window.location.pathname === link.href;
+              const isActive = pathname === link.href;
               return (
                 <a
                   key={link.name}
@@ -84,8 +127,13 @@ export const Navbar = ({ isNavOpen, setIsNavOpen }: NavbarProps) => {
               <FaBell className="w-6 h-6" />
               <span className="absolute -top-1 -right-1 w-5 h-5 bg-pink-500 rounded-full text-xs text-white flex items-center justify-center animate-pulse shadow-lg border-2 border-white">3</span>
             </button>
+            
             {/* Autenticação */}
-            {loading ? null : !user ? (
+            {(!mounted || loading) ? (
+              <div className="w-12 h-12 flex items-center justify-center">
+                <div className="w-8 h-8 border-4 border-indigo-400 border-t-transparent rounded-full animate-spin"></div>
+              </div>
+            ) : !user ? (
               <>
                 <a href="/login" className="flex items-center gap-2 px-5 py-2 bg-white/80 text-indigo-600 rounded-xl shadow-lg hover:bg-indigo-100 hover:text-violet-700 transition-all duration-300 font-bold text-lg animate-fade-in border-2 border-indigo-100">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" /></svg>
@@ -97,15 +145,81 @@ export const Navbar = ({ isNavOpen, setIsNavOpen }: NavbarProps) => {
                 </a>
               </>
             ) : (
-              <div className="relative group">
-                <button className="w-12 h-12 rounded-full bg-gradient-to-tr from-indigo-400 to-violet-500 flex items-center justify-center shadow-xl border-2 border-white hover:scale-110 hover:shadow-2xl transition-transform duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-400" aria-label="Menu do usuário">
-                  <FaUserCircle className="w-8 h-8 text-white drop-shadow animate-fade-in" />
+              <div className="relative">
+                <button 
+                  className="flex items-center gap-3 px-4 py-2 bg-white/90 backdrop-blur-lg rounded-xl shadow-lg hover:bg-white hover:shadow-xl transition-all duration-300 group"
+                  onClick={() => setShowUserMenu(!showUserMenu)}
+                  aria-label="Menu do usuário"
+                >
+                  {/* Foto do usuário */}
+                  <div className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-indigo-200">
+                    {user.photoURL ? (
+                      <Image
+                        src={user.photoURL}
+                        alt={user.displayName || "Usuário"}
+                        fill
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-indigo-400 to-violet-500 flex items-center justify-center">
+                        <FaUserCircle className="w-6 h-6 text-white" />
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Nome do usuário */}
+                  <div className="hidden lg:block text-left">
+                    <p className="text-sm font-semibold text-gray-800">
+                      {user.displayName || user.email?.split('@')[0] || "Usuário"}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {user.email}
+                    </p>
+                  </div>
+                  
+                  {/* Ícone de seta */}
+                  <svg 
+                    className={`w-4 h-4 text-gray-600 transition-transform duration-200 ${showUserMenu ? 'rotate-180' : ''}`} 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                  </svg>
                 </button>
+                
                 {/* Menu suspenso */}
-                <div className="absolute right-0 mt-2 w-40 bg-white/90 backdrop-blur-lg rounded-xl shadow-2xl py-2 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-all duration-300 z-50 animate-fade-in">
-                  <a href="#" className="block px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">Perfil</a>
-                  <a href="#" className="block px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">Sair</a>
-                </div>
+                {showUserMenu && (
+                  <div className="absolute right-0 mt-2 w-56 bg-white/95 backdrop-blur-xl rounded-xl shadow-2xl py-2 border border-gray-100 animate-fade-in z-50">
+                    <div className="px-4 py-3 border-b border-gray-100">
+                      <p className="text-sm font-semibold text-gray-800">
+                        {user.displayName || "Usuário"}
+                      </p>
+                      <p className="text-xs text-gray-500 truncate">
+                        {user.email}
+                      </p>
+                    </div>
+                    
+                    <div className="py-1">
+                      <a 
+                        href="/configuracoes" 
+                        className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors"
+                        onClick={() => setShowUserMenu(false)}
+                      >
+                        <FaCog className="w-4 h-4" />
+                        Configurações
+                      </a>
+                      
+                      <button 
+                        onClick={handleLogout}
+                        className="flex items-center gap-3 w-full px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors"
+                      >
+                        <FaSignOutAlt className="w-4 h-4" />
+                        Sair
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
@@ -146,16 +260,14 @@ export const Navbar = ({ isNavOpen, setIsNavOpen }: NavbarProps) => {
             {[
               { name: 'Início', href: '/' },
               { name: 'Dashboard', href: '/dashboard' },
-              { name: 'Meus Pets', href: '/pets' },
+              { name: 'Meus Pets', href: '/meus-pets' },
               { name: 'Configurações', href: '/configuracoes' }
             ].map((link) => (
               <li key={link.name}>
                 <a
                   href={link.href}
                   className={`block text-2xl font-bold px-4 py-2 rounded transition-colors duration-200
-                    {typeof window !== "undefined" && window.location.pathname === link.href
-                      ? 'text-indigo-700 bg-indigo-100'
-                      : 'text-gray-700 hover:bg-indigo-50 hover:text-indigo-700'}
+                    ${pathname === link.href ? 'text-indigo-700 bg-indigo-100' : 'text-gray-700 hover:bg-indigo-50 hover:text-indigo-700'}
                   `}
                   onClick={() => setIsNavOpen(false)}
                 >
@@ -163,6 +275,47 @@ export const Navbar = ({ isNavOpen, setIsNavOpen }: NavbarProps) => {
                 </a>
               </li>
             ))}
+            
+            {/* Usuário logado no mobile */}
+            {user && (
+              <li className="border-t pt-4">
+                <div className="flex items-center justify-center gap-3 mb-4">
+                  <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-indigo-200">
+                    {user.photoURL ? (
+                      <Image
+                        src={user.photoURL}
+                        alt={user.displayName || "Usuário"}
+                        width={48}
+                        height={48}
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-indigo-400 to-violet-500 flex items-center justify-center">
+                        <FaUserCircle className="w-6 h-6 text-white" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="text-left">
+                    <p className="font-semibold text-gray-800">
+                      {user.displayName || user.email?.split('@')[0] || "Usuário"}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      {user.email}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    setIsNavOpen(false);
+                  }}
+                  className="flex items-center justify-center gap-2 w-full px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                >
+                  <FaSignOutAlt className="w-4 h-4" />
+                  Sair
+                </button>
+              </li>
+            )}
           </ul>
           <button
             className="mt-8 text-gray-400 hover:text-indigo-400 text-lg"

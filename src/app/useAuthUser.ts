@@ -9,6 +9,14 @@ export function useAuthUser() {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      console.log('🔥 Firebase Auth State Changed:', JSON.stringify({ 
+        user: firebaseUser ? { 
+          uid: firebaseUser.uid, 
+          email: firebaseUser.email, 
+          displayName: firebaseUser.displayName 
+        } : null,
+        loading: false 
+      }, null, 2));
       setUser(firebaseUser);
       setLoading(false);
     });

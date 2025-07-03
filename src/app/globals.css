@@ -104,6 +104,46 @@ body {
   }
 }
 
+@keyframes wave {
+  0% { opacity: 0; transform: scale(0.9); }
+  50% { opacity: 0.3; transform: scale(1.1); }
+  100% { opacity: 0; transform: scale(1.2); }
+}
+
+@keyframes pet-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes pet-swing {
+  0%, 100% { transform: rotate(-5deg); }
+  50% { transform: rotate(8deg); }
+}
+
+@keyframes pegada-move {
+  0% { transform: translateX(-10vw); opacity: 0; }
+  10% { opacity: 0.2; }
+  50% { opacity: 0.4; }
+  90% { opacity: 0.2; }
+  100% { transform: translateX(110vw); opacity: 0; }
+}
+
+@keyframes bounce-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes ping-slow {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.7; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes float-reverse {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(10px); }
+}
+
 .animate-ken-burns {
   animation: ken-burns 20s ease-in-out infinite;
 }
@@ -117,7 +157,11 @@ body {
 }
 
 .animate-float {
-  animation: float 6s ease-in-out infinite;
+  animation: float 4s ease-in-out infinite;
+}
+
+.animate-float-slow {
+  animation: float 8s ease-in-out infinite;
 }
 
 .animate-pulse {
@@ -146,13 +190,32 @@ body {
   animation: bounce 2s infinite;
 }
 
-@keyframes bounce {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
+.animate-wave {
+  animation: wave 1s linear;
+}
+
+.animate-pet-bounce {
+  animation: pet-bounce 2s infinite;
+}
+
+.animate-pet-swing {
+  animation: pet-swing 2.2s infinite;
+}
+
+.animate-pegada-move {
+  animation: pegada-move 8s linear infinite;
+}
+
+.animate-bounce-slow {
+  animation: bounce-slow 3s infinite;
+}
+
+.animate-ping-slow {
+  animation: ping-slow 2.5s infinite;
+}
+
+.animate-float-reverse {
+  animation: float-reverse 4s ease-in-out infinite;
 }
 
 /* Efeitos de hover personalizados */
@@ -206,3 +269,6 @@ body {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
 }
+
+.animated-particle { animation: float 6s ease-in-out infinite; }
+@keyframes float { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-16px);} }
