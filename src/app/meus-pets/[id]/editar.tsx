@@ -9,7 +9,6 @@ import { onAuthStateChanged } from 'firebase/auth';
 export default function EditarPetPage() {
   const { id } = useParams();
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
   const [pet, setPet] = useState<any>(null);
   const [nome, setNome] = useState('');
   const [tipo, setTipo] = useState('cachorro');
@@ -19,27 +18,17 @@ export default function EditarPetPage() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (u) => {
-      setUser(u);
-      if (!u) router.push('/login');
-    });
-    return () => unsub();
-  }, [router]);
-
-  useEffect(() => {
     if (!id) return;
-    (async () => {
-      const docRef = doc(db, 'pets', id as string);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        const data = docSnap.data();
-        setPet(data);
-        setNome(data.nome);
-        setTipo(data.tipo);
-        setRaca(data.raca);
-      }
-      setLoading(false);
-    })();
+    const stored = localStorage.getItem('pets');
+    const pets = stored ? JSON.parse(stored) : [];
+    const found = pets.find((p: any) => p.id === id);
+    if (found) {
+      setPet(found);
+      setNome(found.nome);
+      setTipo(found.tipo);
+      setRaca(found.raca);
+    }
+    setLoading(false);
   }, [id]);
 
   const handleSubmit = async (e: any) => {
@@ -47,18 +36,14 @@ export default function EditarPetPage() {
     setError('');
     setLoading(true);
     try {
-      let fotoUrl = pet.fotoUrl || '';
+      let fotoUrl = pet?.fotoUrl || '';
       if (foto) {
-        const storageRef = ref(storage, `pets/${user.uid}_${Date.now()}_${foto.name}`);
-        await uploadBytes(storageRef, foto);
-        fotoUrl = await getDownloadURL(storageRef);
+        fotoUrl = URL.createObjectURL(foto);
       }
-      await updateDoc(doc(db, 'pets', id as string), {
-        nome,
-        tipo,
-        raca,
-        fotoUrl
-      });
+      const stored = localStorage.getItem('pets');
+      let pets = stored ? JSON.parse(stored) : [];
+      pets = pets.map((p: any) => p.id === id ? { ...p, nome, tipo, raca, fotoUrl } : p);
+      localStorage.setItem('pets', JSON.stringify(pets));
       router.push('/meus-pets');
     } catch (err: any) {
       setError('Erro ao atualizar pet.');

@@ -1,197 +1,218 @@
+"use client";
+import { useEffect, useState } from 'react';
 import Image from 'next/image'
-import { FaPaw, FaBone, FaHeartbeat, FaMapMarkerAlt, FaUtensils, FaChartLine, FaDog, FaCat, FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
+import { FaPaw, FaBone, FaHeartbeat, FaMapMarkerAlt, FaUtensils, FaChartLine, FaDog, FaCat, FaCheckCircle, FaExclamationTriangle, FaPlus, FaNotesMedical, FaMicrochip, FaHome } from 'react-icons/fa';
+import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css';
+import { motion } from 'framer-motion';
+import Lottie from 'lottie-react';
+import petLottie from '../../../public/lottie/pet-demo.json';
+import PetCarousel from '../components/PetCarousel';
+import { useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 
 export default function Dashboard() {
+  const [pets, setPets] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const id = searchParams.get('id');
+
+  useEffect(() => {
+    // Carregar pets do localStorage
+    const stored = localStorage.getItem('pets');
+    let petsData = stored ? JSON.parse(stored) : [];
+    
+    // Se não há pets, adicionar exemplos
+    if (petsData.length === 0) {
+      const petsExemplo = [
+        {
+          id: "1",
+          nome: "Rex",
+          tipo: "cachorro",
+          raca: "Golden Retriever",
+          idade: 3,
+          peso: 28.5,
+          cor: "Dourado",
+          sexo: "macho",
+          microchip: "123456789012345",
+          castrado: true,
+          vacinado: true,
+          vermifugado: true,
+          alergias: "Nenhuma alergia conhecida",
+          medicamentos: "Nenhum medicamento em uso",
+          comportamento: "Brincalhão e ativo",
+          observacoes: "Rex adora brincar com bolinhas e é muito sociável com outros cães. Sempre animado para passeios!",
+          fotoUrl: "",
+          criadoEm: new Date('2024-01-15')
+        }
+      ];
+      
+      localStorage.setItem('pets', JSON.stringify(petsExemplo));
+      petsData = petsExemplo;
+    }
+    
+    setPets(petsData);
+    setLoading(false);
+  }, []);
+
+  // Calcular estatísticas dos pets
+  const totalPets = pets.length;
+  const petsVacinados = pets.filter(pet => pet.vacinado).length;
+  const petsCastrados = pets.filter(pet => pet.castrado).length;
+  const percentualVacinados = totalPets > 0 ? Math.round((petsVacinados / totalPets) * 100) : 0;
+  const percentualCastrados = totalPets > 0 ? Math.round((petsCastrados / totalPets) * 100) : 0;
+
+  // Pet principal: busca pelo id, se não achar, pega o primeiro
+  const petPrincipal = pets.find(pet => pet.id === id) || pets[0];
+
+  // Exemplo de dados mockados
+  const atividade = 82;
+  const alimentacao = 67;
+  const conquistas = [
+    { icon: <FaCheckCircle className="text-green-500 animate-bounce" />, texto: `${petsVacinados} pets vacinados!` },
+    { icon: <FaPaw className="text-blue-400 animate-bounce" />, texto: `${totalPets} pets cadastrados!` },
+  ];
+  const timeline = [
+    { hora: '08:00', evento: 'Café da manhã', cor: 'bg-green-100', icon: <FaUtensils className="text-green-500" /> },
+    { hora: '10:00', evento: 'Passeio', cor: 'bg-blue-100', icon: <FaPaw className="text-blue-400" /> },
+    { hora: '12:00', evento: 'Alerta: água baixa', cor: 'bg-yellow-100', icon: <FaExclamationTriangle className="text-yellow-500 animate-pulse" /> },
+    { hora: '14:00', evento: 'Almoço', cor: 'bg-green-100', icon: <FaUtensils className="text-green-500" /> },
+    { hora: '16:00', evento: 'Brincadeira', cor: 'bg-purple-100', icon: <FaBone className="text-purple-400" /> },
+  ];
+
+  const getTipoIcon = (tipo: string) => {
+    switch (tipo) {
+      case 'cachorro': return <FaDog className="text-yellow-400" />;
+      case 'gato': return <FaCat className="text-indigo-400" />;
+      default: return <FaPaw className="text-green-400" />;
+    }
+  };
+
+  if (loading) return <div className="min-h-screen flex items-center justify-center text-blue-900 text-xl font-bold">Carregando...</div>;
+  if (!petPrincipal) return <div className="min-h-screen flex items-center justify-center text-blue-900 text-xl font-bold">Pet não encontrado.</div>;
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-green-100 to-violet-100 font-inter">
-      <div className="container mx-auto px-4 py-10">
-        <div className="flex flex-col md:flex-row items-center justify-between mb-10 gap-6">
-          <h1 className="text-4xl font-black text-blue-900 flex items-center gap-3 drop-shadow-lg">
-            <FaPaw className="text-green-400 animate-bounce" /> Dashboard PetGuard
-          </h1>
-          <div className="flex items-center space-x-4">
-            <div className="relative w-16 h-16 rounded-full overflow-hidden border-4 border-green-300 shadow-lg animate-pulse">
-              <Image
-                src="https://images.unsplash.com/photo-1552053831-71594a27632d?q=80&w=2062"
-                alt="Avatar do Pet"
-                fill
-                className="object-cover"
-              />
+    <div className="min-h-screen relative font-inter px-4 py-10 overflow-x-hidden bg-gradient-to-br from-blue-400 via-violet-300 to-green-200 animate-gradient-x">
+      {/* Saudação animada com partículas leves */}
+      <div className="flex flex-col items-center mb-10 mt-24">
+        <div className="relative mb-2">
+          {petPrincipal.fotoUrl ? (
+            <div className="rounded-full p-1 bg-gradient-to-tr from-blue-300 via-blue-100 to-violet-200 shadow-lg">
+              <Image src={petPrincipal.fotoUrl} alt={petPrincipal.nome} width={140} height={140} className="w-36 h-36 object-cover rounded-full border-4 border-white shadow-md" priority />
+              {/* Badge do tipo do pet */}
+              <span className="absolute bottom-2 right-2 bg-white rounded-full p-1 shadow-md border border-blue-200 flex items-center justify-center" style={{width: '38px', height: '38px'}}>
+                {getTipoIcon(petPrincipal.tipo)}
+              </span>
             </div>
-            <div>
-              <p className="font-bold text-blue-900 text-lg flex items-center gap-1"><FaDog className="text-yellow-400" /> Rex</p>
-              <p className="text-sm text-blue-700 flex items-center gap-1"><FaBone className="text-green-400" /> Golden Retriever</p>
+          ) : (
+            <div className="w-36 h-36 flex items-center justify-center rounded-full bg-gradient-to-br from-blue-200 to-purple-200 shadow-lg">
+              {getTipoIcon(petPrincipal.tipo)}
             </div>
-          </div>
+          )}
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {/* Card de Status do Pet */}
-          <div className="bg-white/80 backdrop-blur-xl p-7 rounded-3xl shadow-2xl border-2 border-green-200">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-extrabold text-blue-700 flex items-center gap-2"><FaHeartbeat className="text-pink-400 animate-pulse" /> Status do Pet</h2>
-              <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-bold animate-pulse">Online</span>
-            </div>
-            <div className="space-y-4">
-              <div className="flex items-center space-x-3">
-                <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center">
-                  <FaMapMarkerAlt className="w-5 h-5 text-blue-600" />
-                </div>
-                <div>
-                  <p className="text-sm text-blue-700">Última localização</p>
-                  <p className="text-blue-900 font-bold">Casa</p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-3">
-                <div className="w-9 h-9 rounded-full bg-purple-100 flex items-center justify-center">
-                  <FaChartLine className="w-5 h-5 text-purple-600" />
-                </div>
-                <div>
-                  <p className="text-sm text-blue-700">Nível de atividade</p>
-                  <p className="text-blue-900 font-bold">Normal</p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-3">
-                <div className="w-9 h-9 rounded-full bg-yellow-100 flex items-center justify-center">
-                  <FaUtensils className="w-5 h-5 text-yellow-600" />
-                </div>
-                <div>
-                  <p className="text-sm text-blue-700">Última alimentação</p>
-                  <p className="text-blue-900 font-bold">2h atrás</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Card de Localização */}
-          <div className="bg-white/80 backdrop-blur-xl p-7 rounded-3xl shadow-2xl border-2 border-blue-200">
-            <h2 className="text-xl font-extrabold text-blue-700 mb-4 flex items-center gap-2"><FaMapMarkerAlt className="text-green-400" /> Localização em Tempo Real</h2>
-            <div className="h-64 bg-blue-50 rounded-xl overflow-hidden relative">
-              <Image
-                src="https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=2074"
-                alt="Mapa de localização"
-                fill
-                className="object-cover"
-              />
-              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                <div className="w-10 h-10 bg-green-400 rounded-full border-4 border-white animate-pulse shadow-lg" />
-              </div>
-            </div>
-          </div>
-
-          {/* Card de Atividade */}
-          <div className="bg-white/80 backdrop-blur-xl p-7 rounded-3xl shadow-2xl border-2 border-blue-200">
-            <h2 className="text-xl font-extrabold text-blue-700 mb-4 flex items-center gap-2"><FaChartLine className="text-purple-400" /> Atividade Física</h2>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="w-11 h-11 rounded-full bg-blue-100 flex items-center justify-center">
-                    <FaPaw className="w-6 h-6 text-blue-600 animate-bounce" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-blue-700">Tempo em movimento</p>
-                    <p className="text-blue-900 font-bold">45 min</p>
-                  </div>
-                </div>
-              </div>
-              <div className="h-2 bg-blue-100 rounded-full overflow-hidden">
-                <div className="h-full bg-blue-500 rounded-full animate-pulse" style={{ width: '75%' }} />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-blue-50 p-3 rounded-lg">
-                  <p className="text-sm text-blue-700">Distância</p>
-                  <p className="text-blue-900 font-bold">2.5 km</p>
-                </div>
-                <div className="bg-blue-50 p-3 rounded-lg">
-                  <p className="text-sm text-blue-700">Energia</p>
-                  <p className="text-blue-900 font-bold">Alto</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Card de Alimentação */}
-          <div className="bg-white/80 backdrop-blur-xl p-7 rounded-3xl shadow-2xl border-2 border-green-200">
-            <h2 className="text-xl font-extrabold text-blue-700 mb-4 flex items-center gap-2"><FaUtensils className="text-yellow-400" /> Controle de Alimentação</h2>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="w-11 h-11 rounded-full bg-green-100 flex items-center justify-center">
-                    <FaUtensils className="w-6 h-6 text-green-600" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-blue-700">Próxima refeição</p>
-                    <p className="text-blue-900 font-bold">14:00</p>
-                  </div>
-                </div>
-              </div>
-              <div className="bg-green-50 p-4 rounded-lg">
-                <div className="flex justify-between mb-2">
-                  <span className="text-sm text-blue-700">Nível do reservatório</span>
-                  <span className="text-sm font-bold text-blue-900">75%</span>
-                </div>
-                <div className="h-2 bg-green-200 rounded-full overflow-hidden">
-                  <div className="h-full bg-green-500 rounded-full animate-pulse" style={{ width: '75%' }} />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-green-50 p-3 rounded-lg">
-                  <p className="text-sm text-blue-700">Quantidade</p>
-                  <p className="text-blue-900 font-bold">200g</p>
-                </div>
-                <div className="bg-green-50 p-3 rounded-lg">
-                  <p className="text-sm text-blue-700">Refeições</p>
-                  <p className="text-blue-900 font-bold">3/dia</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Card de Alertas */}
-          <div className="bg-white/80 backdrop-blur-xl p-7 rounded-3xl shadow-2xl border-2 border-yellow-200">
-            <h2 className="text-xl font-extrabold text-blue-700 mb-4 flex items-center gap-2"><FaExclamationTriangle className="text-yellow-400 animate-bounce" /> Alertas</h2>
-            <div className="space-y-4">
-              <div className="flex items-center space-x-3 p-3 bg-green-50 rounded-lg">
-                <div className="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center">
-                  <FaCheckCircle className="w-5 h-5 text-green-600" />
-                </div>
-                <p className="text-green-700 font-bold">Sistema funcionando normalmente</p>
-              </div>
-              <div className="flex items-center space-x-3 p-3 bg-yellow-50 rounded-lg">
-                <div className="w-9 h-9 rounded-full bg-yellow-100 flex items-center justify-center">
-                  <FaExclamationTriangle className="w-5 h-5 text-yellow-600 animate-pulse" />
-                </div>
-                <p className="text-yellow-700 font-bold">Reservatório de ração em 75%</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Card de Estatísticas */}
-          <div className="bg-white/80 backdrop-blur-xl p-7 rounded-3xl shadow-2xl border-2 border-blue-200">
-            <h2 className="text-xl font-extrabold text-blue-700 mb-4 flex items-center gap-2"><FaChartLine className="text-green-400" /> Estatísticas Diárias</h2>
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-blue-50 p-4 rounded-lg">
-                  <p className="text-sm text-blue-700">Tempo de atividade</p>
-                  <p className="text-2xl font-black text-blue-900">2h 30min</p>
-                </div>
-                <div className="bg-blue-50 p-4 rounded-lg">
-                  <p className="text-sm text-blue-700">Calorias gastas</p>
-                  <p className="text-2xl font-black text-blue-900">450</p>
-                </div>
-              </div>
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <div className="flex justify-between mb-2">
-                  <span className="text-sm text-blue-700">Refeições realizadas</span>
-                  <span className="text-sm font-bold text-blue-900">2/3</span>
-                </div>
-                <div className="h-2 bg-blue-200 rounded-full overflow-hidden">
-                  <div className="h-full bg-blue-500 rounded-full animate-pulse" style={{ width: '66%' }} />
-                </div>
-              </div>
-            </div>
-          </div>
+        <h1 className="text-4xl md:text-5xl font-black text-blue-900 mb-2">{petPrincipal.nome}</h1>
+        <div className="text-xl text-blue-700 font-semibold mb-1">{petPrincipal.tipo?.charAt(0).toUpperCase() + petPrincipal.tipo?.slice(1)} - {petPrincipal.raca}</div>
+        <div className="flex items-center gap-2 text-blue-800 font-medium mb-1">
+          <span className="capitalize">{petPrincipal.sexo}</span>
+          <span className="text-gray-400">|</span>
+          <span>Cor: {petPrincipal.cor || 'Não informado'}</span>
+        </div>
+        <div className="flex items-center gap-4 text-blue-900 font-medium">
+          <span>Idade: <b>{petPrincipal.idade || '-'}</b> anos</span>
+          <span>Peso: <b>{petPrincipal.peso || '-'}</b> kg</span>
         </div>
       </div>
+      {/* Widgets do Dashboard Modular */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12 max-w-7xl mx-auto">
+        {/* Widget Saúde */}
+        <div className="rounded-2xl shadow-xl bg-gradient-to-br from-green-100 to-white p-6 flex flex-col items-center gap-2 hover:scale-105 transition-transform">
+          <FaHeartbeat className="text-5xl text-green-400 mb-2" />
+          <h3 className="text-lg font-bold text-green-900">Saúde</h3>
+          <span className={`text-base font-bold ${petPrincipal.vacinado ? 'text-green-700' : 'text-red-700'}`}>{petPrincipal.vacinado ? 'Vacinado em dia' : 'Vacinação pendente'}</span>
+          <span className="text-xs text-gray-500">Última vacina: {petPrincipal.ultimaVacinacao || '10/03/2024'}</span>
+        </div>
+        {/* Widget Castração */}
+        <div className="rounded-2xl shadow-xl bg-gradient-to-br from-blue-100 to-white p-6 flex flex-col items-center gap-2 hover:scale-105 transition-transform">
+          <FaPaw className="text-5xl text-blue-400 mb-2" />
+          <h3 className="text-lg font-bold text-blue-900">Castração</h3>
+          <span className={`text-base font-bold ${petPrincipal.castrado ? 'text-blue-700' : 'text-red-700'}`}>{petPrincipal.castrado ? 'Castrado' : 'Não castrado'}</span>
+        </div>
+        {/* Widget Vermifugação */}
+        <div className="rounded-2xl shadow-xl bg-gradient-to-br from-yellow-100 to-white p-6 flex flex-col items-center gap-2 hover:scale-105 transition-transform">
+          <FaBone className="text-5xl text-yellow-400 mb-2" />
+          <h3 className="text-lg font-bold text-yellow-900">Vermifugação</h3>
+          <span className={`text-base font-bold ${petPrincipal.vermifugado ? 'text-yellow-700' : 'text-red-700'}`}>{petPrincipal.vermifugado ? 'Vermifugado' : 'Não vermifugado'}</span>
+        </div>
+        {/* Widget Microchip */}
+        <div className="rounded-2xl shadow-xl bg-gradient-to-br from-purple-100 to-white p-6 flex flex-col items-center gap-2 hover:scale-105 transition-transform">
+          <FaMicrochip className="text-5xl text-purple-400 mb-2" />
+          <h3 className="text-lg font-bold text-purple-900">Microchip</h3>
+          <span className={`text-base font-bold ${petPrincipal.microchip ? 'text-purple-700' : 'text-red-700'}`}>{petPrincipal.microchip ? 'Sim' : 'Não'}</span>
+          <span className="text-xs text-gray-500">{petPrincipal.microchip || 'Não informado'}</span>
+        </div>
+        {/* Widget Alimentação */}
+        <div className="rounded-2xl shadow-xl bg-gradient-to-br from-orange-100 to-white p-6 flex flex-col items-center gap-2 hover:scale-105 transition-transform">
+          <FaUtensils className="text-5xl text-orange-400 mb-2" />
+          <h3 className="text-lg font-bold text-orange-900">Alimentação</h3>
+          <div className="w-full mb-1">
+            <div className="h-3 w-full bg-orange-100 rounded-full overflow-hidden">
+              <div className="h-3 bg-orange-400 rounded-full transition-all duration-500" style={{width: '80%'}}></div>
+            </div>
+            <span className="text-xs text-orange-700 font-bold">Ração: 80%</span>
+          </div>
+          <span className="text-xs text-gray-500">Última alimentação: 08:00</span>
+        </div>
+        {/* Widget Localização */}
+        <div className="rounded-2xl shadow-xl bg-gradient-to-br from-blue-200 to-white p-6 flex flex-col items-center gap-2 hover:scale-105 transition-transform">
+          <FaMapMarkerAlt className="text-5xl text-blue-500 mb-2" />
+          <h3 className="text-lg font-bold text-blue-900">Localização</h3>
+          <span className="text-base font-bold text-blue-700">Em casa</span>
+          <span className="text-xs text-gray-500">Atualizado: 09:15</span>
+        </div>
+        {/* Widget Observações */}
+        <div className="rounded-2xl shadow-xl bg-gradient-to-br from-pink-100 to-white p-6 flex flex-col items-center gap-2 hover:scale-105 transition-transform col-span-1 sm:col-span-2 lg:col-span-3">
+          <FaNotesMedical className="text-4xl text-pink-400 mb-2" />
+          <h3 className="text-lg font-bold text-pink-900">Observações</h3>
+          <span className="text-base text-pink-800 text-center">{petPrincipal.observacoes || 'Nenhuma observação adicional'}</span>
+        </div>
+      </div>
+      {/* Recomendações rápidas animadas */}
+      <div className="mt-8 max-w-3xl mx-auto">
+        <div className="bg-gradient-to-r from-blue-200 via-green-100 to-violet-200 rounded-2xl p-6 shadow-md flex flex-col md:flex-row items-center gap-4 animate-fade-in-up">
+          <FaCheckCircle className="text-green-500 text-3xl animate-bounce" />
+          <span className="text-blue-900 font-bold text-lg">Mantenha as vacinas em dia e visite o veterinário regularmente!</span>
+        </div>
+      </div>
+      {/* Animação de partículas no fundo */}
+      <style>{`
+        @keyframes gradient-x {
+          0%, 100% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+        }
+        .animate-gradient-x {
+          background-size: 200% 200%;
+          animation: gradient-x 8s ease-in-out infinite;
+        }
+        .animate-glow {
+          box-shadow: 0 0 32px 8px #a5b4fc, 0 0 64px 16px #f0abfc;
+          animation: glow 2.5s ease-in-out infinite alternate;
+        }
+        @keyframes glow {
+          0% { box-shadow: 0 0 32px 8px #a5b4fc, 0 0 64px 16px #f0abfc; }
+          100% { box-shadow: 0 0 48px 16px #818cf8, 0 0 80px 24px #f472b6; }
+        }
+        .animate-fade-in-up {
+          opacity: 0;
+          transform: translateY(24px);
+          animation: fade-in-up 1s forwards;
+        }
+        .animate-fade-in-up.delay-100 { animation-delay: 0.1s; }
+        .animate-fade-in-up.delay-200 { animation-delay: 0.2s; }
+        .animate-fade-in-up.delay-300 { animation-delay: 0.3s; }
+        @keyframes fade-in-up {
+          to { opacity: 1; transform: none; }
+        }
+      `}</style>
     </div>
   )
 } 

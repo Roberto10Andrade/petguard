@@ -258,6 +258,147 @@ body {
   box-shadow: 0 0 30px rgba(168, 85, 247, 0.2);
 }
 
+/* Regras específicas para páginas de pets - garantir legibilidade */
+.pet-details-page,
+.pet-details-page *,
+.pet-form-page,
+.pet-form-page * {
+  color: inherit !important;
+}
+
+/* Forçar cores escuras para texto em páginas de pets */
+.pet-details-page h1,
+.pet-details-page h2,
+.pet-details-page h3,
+.pet-details-page p,
+.pet-details-page span,
+.pet-details-page div {
+  color: #000000 !important;
+}
+
+.pet-details-page .text-black {
+  color: #000000 !important;
+}
+
+.pet-details-page .text-gray-900 {
+  color: #111827 !important;
+}
+
+.pet-details-page .text-gray-800 {
+  color: #1f2937 !important;
+}
+
+.pet-details-page .text-gray-700 {
+  color: #374151 !important;
+}
+
+/* Garantir que inputs e selects tenham texto visível */
+.pet-form-page input,
+.pet-form-page select,
+.pet-form-page textarea {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+}
+
+.pet-form-page input::placeholder,
+.pet-form-page select::placeholder,
+.pet-form-page textarea::placeholder {
+  color: #6b7280 !important;
+}
+
+/* Regras mais específicas para forçar cores */
+.pet-form-page label span,
+.pet-form-page .text-sm,
+.pet-form-page .text-lg,
+.pet-form-page .text-xl,
+.pet-form-page .text-2xl,
+.pet-form-page .text-3xl {
+  color: #000000 !important;
+}
+
+.pet-form-page input[type="text"],
+.pet-form-page input[type="number"],
+.pet-form-page input[type="email"],
+.pet-form-page input[type="password"],
+.pet-form-page select,
+.pet-form-page textarea {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+}
+
+.pet-form-page option {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+}
+
+/* Sobrescrever configurações de tema escuro para páginas de pets */
+@media (prefers-color-scheme: dark) {
+  .pet-details-page,
+  .pet-details-page *,
+  .pet-form-page,
+  .pet-form-page * {
+    color: inherit !important;
+  }
+  
+  .pet-details-page h1,
+  .pet-details-page h2,
+  .pet-details-page h3,
+  .pet-details-page p,
+  .pet-details-page span,
+  .pet-details-page div {
+    color: #000000 !important;
+  }
+  
+  .pet-form-page input,
+  .pet-form-page select,
+  .pet-form-page textarea {
+    color: #000000 !important;
+    background-color: #ffffff !important;
+  }
+  
+  .pet-form-page label span,
+  .pet-form-page .text-sm,
+  .pet-form-page .text-lg,
+  .pet-form-page .text-xl,
+  .pet-form-page .text-2xl,
+  .pet-form-page .text-3xl {
+    color: #000000 !important;
+  }
+  
+  .pet-form-page input[type="text"],
+  .pet-form-page input[type="number"],
+  .pet-form-page input[type="email"],
+  .pet-form-page input[type="password"],
+  .pet-form-page select,
+  .pet-form-page textarea {
+    color: #000000 !important;
+    background-color: #ffffff !important;
+  }
+  
+  .pet-form-page option {
+    color: #000000 !important;
+    background-color: #ffffff !important;
+  }
+}
+
+/* Regras ainda mais específicas para sobrescrever qualquer CSS */
+body .pet-form-page *,
+body .pet-details-page * {
+  color: #000000 !important;
+}
+
+body .pet-form-page input,
+body .pet-form-page select,
+body .pet-form-page textarea {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+}
+
+body .pet-form-page option {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+}
+
 @layer base {
   body {
     @apply bg-black text-white;

@@ -218,7 +218,7 @@ export const Navbar = ({ isNavOpen, setIsNavOpen }: NavbarProps) => {
                         Sair
                       </button>
                     </div>
-                  </div>
+                </div>
                 )}
               </div>
             )}
