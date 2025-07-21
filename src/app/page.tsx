@@ -20,14 +20,14 @@ export default function Home() {
         <div className="flex-1 flex flex-col items-start gap-6 z-10">
           <h1 className="text-4xl md:text-6xl font-black text-blue-900 leading-tight">
             Cuidar do seu pet ficou mais fácil com a Petguard
-          </h1>
+            </h1>
           <p className="text-xl md:text-2xl text-blue-700 max-w-lg">
             Monitore a saúde, alimentação e localização do seu animal em tempo real.
           </p>
           <button className="mt-4 px-8 py-4 rounded-full bg-gradient-to-r from-green-400 to-blue-500 text-white font-bold text-lg shadow-lg hover:scale-105 transition-all duration-300">
             Acompanhar meu pet
-          </button>
-        </div>
+              </button>
+            </div>
         {/* Ilustração à direita */}
         <div className="flex-1 flex items-center justify-center z-10">
           <Image
@@ -96,26 +96,6 @@ export default function Home() {
           Navegue pelas telas ou veja a animação para entender como é fácil acompanhar a saúde, localização e alimentação do seu pet em tempo real!
         </p>
       </section>
-
-      {/* Rodapé */}
-      <footer className="bg-gradient-to-r from-blue-900 via-violet-900 to-green-900 py-10 text-white text-center border-t border-white/10 mt-auto">
-        <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-2 justify-center md:justify-start">
-            <FaPaw className="w-7 h-7 text-blue-200" />
-            <span className="font-black text-xl bg-gradient-to-r from-blue-400 via-violet-400 to-green-400 bg-clip-text text-transparent tracking-tight">PetGuard</span>
-          </div>
-          <div className="flex gap-6 justify-center">
-            <a href="#" className="hover:text-blue-300 transition-colors flex items-center gap-1"><FaEnvelope /> Contato</a>
-            <a href="#" className="hover:text-blue-300 transition-colors flex items-center gap-1"><FaQuestionCircle /> FAQ</a>
-          </div>
-          <div className="flex gap-4 justify-center md:justify-end">
-            <a href="#" aria-label="Instagram" className="hover:text-pink-400 transition-colors"><FaInstagram className="w-6 h-6" /></a>
-            <a href="#" aria-label="Facebook" className="hover:text-blue-400 transition-colors"><FaFacebook className="w-6 h-6" /></a>
-            <a href="#" aria-label="Twitter" className="hover:text-blue-300 transition-colors"><FaTwitter className="w-6 h-6" /></a>
-          </div>
-        </div>
-        <div className="mt-6 text-blue-200 text-xs">&copy; {new Date().getFullYear()} PetGuard. Todos os direitos reservados.</div>
-      </footer>
     </div>
   );
 }
